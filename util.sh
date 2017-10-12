@@ -56,7 +56,13 @@ function extract_msg {
 #
 function send_msg {
     if [[ $debug -eq 0 && $quiet -ne 1 ]]; then
-        notify-send 'BITSnet' "$1" --icon=network-transmit --hint=int:transient:1 --app-name=bitsnet --urgency=low --category=Internet
+        if [[ -z $expire_time ]]; then
+            expire_time=1
+        fi
+        if [[ -z $2 ]]; then
+            expire_time="$2"
+        fi
+        notify-send 'BITSnet' "$1" --icon=network-transmit --hint=int:transient:20 --expire-time="$expire_time" --app-name=bitsnet --urgency=low --category=Internet
     else
         debug_msg "reply: $1"
     fi

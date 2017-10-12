@@ -135,6 +135,14 @@ if [[ "$dev" == "" && $force -ne 1 ]]; then
     debug_msg "Use -f option if you think this is a mistake"
     send_msg "Network interface unknown."
     exit 1
+else
+    case $dev in
+        wl* )
+            dev_name="wifi";;
+        en* )
+            dev_name="ethernet";;
+    esac
+    send_msg "Connecting via $dev_name"
 fi
 
 
@@ -144,6 +152,7 @@ fi
 #
 if [[ $force -ne 1 ]]; then
     debug_msg "Checking if already connected"
+    send_msg "Checking if already connected"
     if wget --quiet --timeout=5 --tries=1 --spider --no-check-certificate \
         --output-file=/dev/null https://google.com
     then
@@ -151,6 +160,7 @@ if [[ $force -ne 1 ]]; then
         exit 0
     else
         debug_msg "Not logged in"
+        send_msg "Not logged in"
     fi
 fi
 
@@ -189,6 +199,7 @@ i=1
 while [[ ! -z ${username[$i]} ]]
 do
     debug_msg "Trying with ID: ${username[$i]}"
+    send_msg "Trying with ID: ${username[$i]}"
     reply=$(ldap_login "${username[$i]}" "${password[$i]}")
 
     # Extract reply
