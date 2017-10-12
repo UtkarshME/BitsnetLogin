@@ -6,6 +6,8 @@
 #
 
 
+login_url=1
+
 #
 # Load util functions
 #
@@ -41,6 +43,7 @@ then
         echo "done"
     fi
 else
+    # shellcheck source=/dev/null
     source "$HOME/.bitsnetrc"
 fi
 
@@ -77,7 +80,7 @@ while getopts "u:p:dhUofwq" o; do
             password[1]=${OPTARG}
             ;;
         d)
-            debug=1
+            export debug=1
             debug_msg "Going into debug mode"
             ;;
         U)
@@ -91,10 +94,10 @@ while getopts "u:p:dhUofwq" o; do
             ;;
 
         w)
-            hostel=1
+            export hostel=1
             ;;
         q)
-            quiet=1
+            export quiet=1
             ;;
         h | * | [?])
             show_help
@@ -133,7 +136,7 @@ if [[ "$dev" == "" && $force -ne 1 ]]; then
     debug_msg "Exiting because dev is empty."
     debug_msg "Make sure you're connected to a network interface"
     debug_msg "Use -f option if you think this is a mistake"
-    send_msg "Network interface unknown."
+    send_msg "Network interface unknown." "2000"
     exit 1
 else
     case $dev in
@@ -156,37 +159,14 @@ if [[ $force -ne 1 ]]; then
     if wget --quiet --timeout=5 --tries=1 --spider --no-check-certificate \
         --output-file=/dev/null https://google.com
     then
-        send_msg "Already logged into the BITSnet"
+        sleep 1
+        send_msg "Already logged into the BITSnet" "2000"
         exit 0
     else
         debug_msg "Not logged in"
         send_msg "Not logged in"
     fi
 fi
-
-
-#
-# Check if it's the hostel wifi
-# ip is hostel's and we're on wireless
-#
-#debug_msg "ip = $(get_ip)"
-#debug_msg "library_ip = $library_ip"
-#if [[ "$hostel" -eq 0 && $dev =~ ^wl && "$(get_ip)" != "$library_ip" ]]; then
-    #hostel=1;
-#fi
-
-
-#
-# Login to the hostel wifi router
-#
-#debug_msg "Logging in"
-#if [[ $hostel -eq 1 ]]; then
-    #debug_msg "Connected to hostel wifi"
-    #debug_msg "Sending request to hostel router"
-    #router_login
-#else
-    #debug_msg "Not connected to the hostel wifi"
-#fi
 
 
 #
@@ -219,7 +199,8 @@ done
 # Display reply or send a notification
 #
 debug_msg "Reply sent"
-send_msg "$reply"
+sleep 1
+send_msg "$reply" "2000"
 
 
 #

@@ -11,6 +11,7 @@ debug=1
 username=1
 password=1
 login_url=1
+expire_time=1
 
 #
 # Display help msg on screen
@@ -56,13 +57,14 @@ function extract_msg {
 #
 function send_msg {
     if [[ $debug -eq 0 && $quiet -ne 1 ]]; then
-        if [[ -z $expire_time ]]; then
-            expire_time=1
+        expire=1000
+        if [[ ! -z $expire_time ]]; then
+            expire=$expire_time
         fi
-        if [[ -z $2 ]]; then
-            expire_time="$2"
+        if [[ ! -z $2 ]]; then
+            expire="$2"
         fi
-        notify-send 'BITSnet' "$1" --icon=network-transmit --hint=int:transient:20 --expire-time="$expire_time" --app-name=bitsnet --urgency=low --category=Internet
+        notify-send 'BITSnet' "$1" --icon=network-transmit --hint=int:transient:20 --expire-time="$expire" --app-name=bitsnet --urgency=low --category=Internet
     else
         debug_msg "reply: $1"
     fi
